@@ -20,21 +20,38 @@ function Cart({
   decreaseItemQty,
 }: Props): JSX.Element {
   return (
-    <div className="cart-list" data-testid="test-cart">
+    <div className="cart-list">
       <h2>{heading}</h2>
-      {cartProducts === null && 'No products added to your cart!'}
+      {cartProducts === null && (
+        <p data-testid="cart-error">No products added to your cart!</p>
+      )}
       {cartProducts &&
         Object.keys(cartProducts).length > 0 &&
         Object.keys(cartProducts).map((key) => {
           const { id, name } = products[key];
           const { count } = cartProducts[key];
           return (
-            <div key={id}>
+            <div key={id} data-testid={`cart-${id}`}>
               <p>{name}</p>
               <p>Qty: {count}</p>
-              <Button onClick={() => decreaseItemQty(id)}>-</Button>
-              <Button onClick={() => increaseItemQty(id)}>+</Button>
-              <Button onClick={() => removeFromCart(id)}>Remove</Button>
+              <Button
+                onClick={() => decreaseItemQty(id)}
+                data-testid={`cart-btn-decr-${id}`}
+              >
+                -
+              </Button>
+              <Button
+                onClick={() => increaseItemQty(id)}
+                data-testid={`cart-btn-incr-${id}`}
+              >
+                +
+              </Button>
+              <Button
+                onClick={() => removeFromCart(id)}
+                data-testid={`cart-btn-remove-${id}`}
+              >
+                Remove
+              </Button>
             </div>
           );
         })}

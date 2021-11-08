@@ -26,7 +26,7 @@ export interface IConfigAPI {
 export interface INutrient {
   id: string;
   amount: number;
-  unit: string;
+  unit?: string;
 }
 
 export interface INutrients {
@@ -60,4 +60,26 @@ export interface ICartProduct {
 
 export interface ICartProducts {
   [key: string]: ICartProduct;
+}
+
+export interface ICart {
+  products: ICartProducts;
+  total: number;
+}
+
+export interface ITotal {
+  cartProducts: ICartProducts;
+  products: IProducts;
+}
+
+export interface ILimitsProps {
+  products: IProducts;
+  config: IConfig;
+  cartProducts: ICartProducts;
+}
+
+export interface ILimit {
+  [key: string]: {
+    amount: number;
+  };
 }

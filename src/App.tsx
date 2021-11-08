@@ -3,8 +3,13 @@ import './App.css';
 import ProductList from './components/ProductList/ProductList';
 import Cart from './components/Cart/Cart';
 import CartTotal from './components/CartTotal/CartTotal';
-import { IProducts, IConfig, ICartProducts } from './types';
-import { transformProducts, transformConfig } from './utils/index';
+import { IProducts, IConfig, ICartProducts, ILimit } from './types';
+import {
+  transformProducts,
+  transformConfig,
+  getTotal,
+  getLimits,
+} from './utils/index';
 
 function App(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,6 +17,21 @@ function App(): JSX.Element {
   const [products, setProducts] = useState<IProducts | null>(null);
   const [config, setConfig] = useState<IConfig | null>(null);
   const [cartProducts, setCartProducts] = useState<ICartProducts | null>(null);
+  const [total, setTotal] = useState<number>(0);
+  const [upperLimit, setUpperLimit] = useState<ILimit | null>(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setTotal(getTotal({ products, cartProducts }));
+  }, [cartProducts]);
+
+  useEffect(() => {
+    const newUpperLimit = getLimits({ products, config, cartProducts });
+    setUpperLimit(newUpperLimit);
+  }, [cartProducts]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -35,10 +55,6 @@ function App(): JSX.Element {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const addToCart = (id: string) => {
     let newCartProducts;
     if (!cartProducts) {
@@ -48,10 +64,7 @@ function App(): JSX.Element {
           count: 1,
         },
       };
-      setCartProducts(newCartProducts);
-      return;
-    }
-    if (!Object.keys(cartProducts).includes(id)) {
+    } else if (!Object.keys(cartProducts).includes(id)) {
       newCartProducts = {
         ...cartProducts,
         [id]: {
@@ -99,10 +112,8 @@ function App(): JSX.Element {
         count: newCount,
       },
     };
-
     setCartProducts(newCartProducts);
   };
-
   const removeFromCart = (id: string) => {
     const newCartProducts = {
       ...cartProducts,
@@ -126,9 +137,9 @@ function App(): JSX.Element {
 
       {cartProducts && Object.keys(cartProducts).length > 0 && (
         <CartTotal
-          config={config}
-          cartProducts={cartProducts}
-          products={products}
+          currency={config.currency}
+          total={total}
+          // upperLimit={upperLimit}
         />
       )}
 
