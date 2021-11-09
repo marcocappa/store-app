@@ -72,7 +72,14 @@ export function getTotalVitamins({
   config,
   cartProducts,
 }: ILimitsProps): ILimit | null {
-  if (!cartProducts) return null;
+  if (
+    !cartProducts ||
+    !config ||
+    !Object.keys(config).includes('tolerableUpperLimits') ||
+    !products
+  )
+    return null;
+
   const totalInCart = Object.keys(config.tolerableUpperLimits).reduce(
     (acc, key) => {
       const total = Object.values(cartProducts).reduce((amount, cart) => {
