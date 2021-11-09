@@ -8,7 +8,7 @@ import {
   transformProducts,
   transformConfig,
   getTotal,
-  getTotalVitamins,
+  getCartLimits,
 } from './utils/index';
 
 function App(): JSX.Element {
@@ -18,7 +18,7 @@ function App(): JSX.Element {
   const [config, setConfig] = useState<IConfig | null>(null);
   const [cartProducts, setCartProducts] = useState<ICartProducts | null>(null);
   const [total, setTotal] = useState<number>(0);
-  const [upperLimit, setUpperLimit] = useState<ILimit | null>(null);
+  const [cartLimits, setCartLimits] = useState<ILimit | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -29,12 +29,12 @@ function App(): JSX.Element {
   }, [cartProducts]);
 
   useEffect(() => {
-    const newUpperLimit = getTotalVitamins({
+    const newCartLimits = getCartLimits({
       products,
       config,
       cartProducts,
     });
-    setUpperLimit(newUpperLimit);
+    setCartLimits(newCartLimits);
   }, [cartProducts]);
 
   const fetchData = async () => {
@@ -141,16 +141,13 @@ function App(): JSX.Element {
           removeFromCart={removeFromCart}
           increaseItemQty={increaseItemQty}
           decreaseItemQty={decreaseItemQty}
+          cartLimits={cartLimits}
         />
       </div>
 
       {cartProducts && Object.keys(cartProducts).length > 0 && (
         <div className="container">
-          <CartTotal
-            currency={config.currency}
-            total={total}
-            upperLimit={upperLimit}
-          />
+          <CartTotal currency={config.currency} total={total} />
         </div>
       )}
 
@@ -161,6 +158,7 @@ function App(): JSX.Element {
           error={error}
           products={products}
           addToCart={addToCart}
+          cartLimits={cartLimits}
         />
       </div>
     </div>

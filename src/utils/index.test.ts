@@ -3,8 +3,8 @@ import {
   reduceNutrients,
   transformConfig,
   getTotal,
-  getTotalVitamins,
-  getUpperLimits,
+  getCartLimits,
+  isProductDisabled,
 } from './';
 
 // mock ids generated from uuid
@@ -162,7 +162,7 @@ test('getTotal', () => {
   expect(total).toBe(0);
 });
 
-test('getTotalVitamins', () => {
+test('getCartLimits', () => {
   // Arrange
   const products = {
     'id-1': {
@@ -170,7 +170,7 @@ test('getTotalVitamins', () => {
       name: 'Vitamin A',
       price: 6,
       nutrients: {
-        'vitamin-a': { id: 'vitamin-a', amount: 800 },
+        'vitamin-a': { id: 'vitamin-a', amount: 1000 },
       },
     },
     'id-2': {
@@ -178,7 +178,7 @@ test('getTotalVitamins', () => {
       name: 'Vitamin C',
       price: 8,
       nutrients: {
-        'vitamin-a': { id: 'vitamin-a', amount: 1000 },
+        'vitamin-a': { id: 'vitamin-a', amount: 500 },
         'vitamin-c': { id: 'vitamin-c', amount: 50 },
       },
     },
@@ -211,7 +211,7 @@ test('getTotalVitamins', () => {
   let cartProducts = null;
 
   // Act
-  let result = getTotalVitamins({ products, cartProducts, config });
+  let result = getCartLimits({ products, cartProducts, config });
 
   // Assert
   expect(result).toStrictEqual(null);
@@ -220,7 +220,7 @@ test('getTotalVitamins', () => {
   cartProducts = {
     'id-1': {
       id: 'id-1',
-      count: 5,
+      count: 1,
     },
     'id-2': {
       id: 'id-2',
@@ -229,82 +229,43 @@ test('getTotalVitamins', () => {
   };
 
   // Act
-  result = getTotalVitamins({ products, cartProducts, config });
+  result = getCartLimits({ products, cartProducts, config });
 
   // Assert
   expect(result).toStrictEqual({
-    'vitamin-a': {
-      amount: 5000,
-    },
+    'vitamin-a': { amount: 0 },
+    'vitamin-c': { amount: 950 },
+    'vitamin-d': { amount: 75 },
+    'vitamin-e': { amount: 540 },
   });
 });
 
-test('getUpperLimits', () => {
+test('isProductDisabled', () => {
   // Arrange
-  const config = {
-    tolerableUpperLimits: {
-      'vitamin-a': {
-        id: 'vitamin-a',
-        amount: 1500,
-        unit: 'mcg',
-      },
-      'vitamin-c': {
-        id: 'vitamin-c',
-        amount: 1000,
-        unit: 'mg',
-      },
-      'vitamin-d': {
-        id: 'vitamin-d',
-        amount: 75,
-        unit: 'mcg',
-      },
-      'vitamin-e': {
-        id: 'vitamin-e',
-        amount: 540,
-        unit: 'mg',
-      },
-    },
-    currency: 'GBP',
-  };
-  let totalVitamins = {
+  const nutrients = {
     'vitamin-a': {
-      amount: 1501,
+      amount: 1000,
+      id: 'vitamin-a',
     },
-    'vitamin-c': {
-      amount: 999,
-    },
-    'vitamin-d': {
-      amount: 76,
-    },
-    'vitamin-e': {
-      amount: 539,
-    },
+  };
+  let cartLimits = {
+    'vitamin-a': { amount: 1000 },
   };
 
   // Act
-  let limitExceeded = getUpperLimits({ totalVitamins, config });
+  let isDisabled = isProductDisabled({ nutrients, cartLimits });
 
   // Assert
-  expect(limitExceeded).toStrictEqual({
-    'vitamin-a': {
-      amount: 1501,
-    },
-    'vitamin-d': {
-      amount: 76,
-    },
-  });
+  expect(isDisabled).toBe(false);
 
   // Arrange
-  totalVitamins = {};
+  cartLimits = {
+    'vitamin-a': { amount: 999 },
+  };
 
   // Act
-  limitExceeded = getUpperLimits({ totalVitamins, config });
-  expect(limitExceeded).toStrictEqual(null);
+  isDisabled = isProductDisabled({ nutrients, cartLimits });
 
-  // Arrange
-  totalVitamins = null;
-
-  // Act
-  limitExceeded = getUpperLimits({ totalVitamins, config });
-  expect(limitExceeded).toStrictEqual(null);
+  // Assert
+  expect(isDisabled).toBe(true);
 });

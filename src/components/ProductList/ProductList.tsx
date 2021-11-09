@@ -1,14 +1,15 @@
 import React from 'react';
 import ProductCard from '../ProductCard/ProductCard';
+import { ILimit, IProducts } from '../../types';
+import { isProductDisabled } from '../../utils';
 import './style.scss';
-
-import { IProducts } from '../../types';
 
 interface Props {
   loading: boolean;
   error: null | string;
   heading: string;
   products: IProducts;
+  cartLimits: ILimit;
   addToCart: (id: string) => void;
 }
 
@@ -17,6 +18,7 @@ function ProductList({
   error,
   heading,
   products,
+  cartLimits,
   addToCart,
 }: Props): JSX.Element {
   return (
@@ -29,6 +31,7 @@ function ProductList({
         <div className="product-list__container">
           {Object.keys(products).map((key) => {
             const { name, price, id, nutrients } = products[key];
+
             return (
               <ProductCard
                 key={id}
@@ -37,6 +40,7 @@ function ProductList({
                 price={price}
                 nutrients={nutrients}
                 addToCart={addToCart}
+                isDisabled={isProductDisabled({ nutrients, cartLimits })}
               />
             );
           })}

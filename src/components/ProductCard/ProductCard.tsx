@@ -4,6 +4,7 @@ import './style.scss';
 import { IProduct } from '../../types';
 
 interface Props extends IProduct {
+  isDisabled: boolean;
   addToCart: (id: string) => void;
 }
 
@@ -12,6 +13,7 @@ function ProductCard({
   name,
   price,
   nutrients,
+  isDisabled,
   addToCart,
 }: Props): JSX.Element {
   return (
@@ -26,7 +28,9 @@ function ProductCard({
           </li>
         ))}
       </ul>
-      <Button onClick={() => addToCart(id)}>Add to Cart</Button>
+      <Button onClick={() => addToCart(id)} isDisabled={isDisabled}>
+        Add to Cart
+      </Button>
     </div>
   );
 }

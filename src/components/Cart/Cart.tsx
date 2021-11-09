@@ -1,12 +1,14 @@
 import React from 'react';
-import { IProducts, ICartProducts } from '../../types';
+import { IProducts, ICartProducts, ILimit } from '../../types';
 import Button from '../Button/Button';
 import './style.scss';
+import { isProductDisabled } from '../../utils';
 
 interface Props {
   heading: string;
   cartProducts: ICartProducts | null;
   products: IProducts;
+  cartLimits: ILimit;
   removeFromCart: (id: string) => void;
   increaseItemQty: (id: string) => void;
   decreaseItemQty: (id: string) => void;
@@ -16,6 +18,7 @@ function Cart({
   heading,
   cartProducts,
   products,
+  cartLimits,
   removeFromCart,
   increaseItemQty,
   decreaseItemQty,
@@ -29,7 +32,7 @@ function Cart({
       {cartProducts &&
         Object.keys(cartProducts).length > 0 &&
         Object.keys(cartProducts).map((key) => {
-          const { id, name } = products[key];
+          const { id, name, nutrients } = products[key];
           const { count } = cartProducts[key];
           return (
             <div
@@ -55,6 +58,7 @@ function Cart({
                   data-testid={`cart-btn-incr-${id}`}
                   className="cart-list__actions-increase"
                   title="increase product quantity"
+                  isDisabled={isProductDisabled({ nutrients, cartLimits })}
                 >
                   +
                 </Button>

@@ -6,6 +6,7 @@ interface Props {
   children: React.ReactNode;
   className?: string;
   title?: string;
+  isDisabled?: boolean;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
@@ -14,6 +15,7 @@ function Button({
   children,
   onClick,
   title,
+  isDisabled,
   ...props
 }: Props): JSX.Element {
   return (
@@ -22,6 +24,7 @@ function Button({
       data-testid="test-button"
       onClick={(e) => onClick(e)}
       title={title}
+      disabled={isDisabled}
       {...props}
     >
       {children}

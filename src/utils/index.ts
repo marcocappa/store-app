@@ -10,7 +10,7 @@ import {
   ITotal,
   ILimitsProps,
   ILimit,
-  IUpperLimitsProps,
+  IButtonDisabledProp,
 } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -67,7 +67,7 @@ export function getTotal({ cartProducts, products }: ITotal): number {
   }, 0);
 }
 
-export function getTotalVitamins({
+export function getCartLimits({
   products,
   config,
   cartProducts,
@@ -79,7 +79,6 @@ export function getTotalVitamins({
     !products
   )
     return null;
-
   const totalInCart = Object.keys(config.tolerableUpperLimits).reduce(
     (acc, key) => {
       const total = Object.values(cartProducts).reduce((amount, cart) => {
@@ -90,34 +89,37 @@ export function getTotalVitamins({
         }
         return amount;
       }, 0);
-      if (total === 0) {
-        return acc;
-      }
+
       return {
         ...acc,
         [key]: {
-          amount: total,
+          amount: config.tolerableUpperLimits[key].amount - total,
         },
       };
     },
     {}
   );
-  return getUpperLimits({ totalVitamins: totalInCart, config });
+  return totalInCart;
 }
 
-export function getUpperLimits({
-  totalVitamins,
-  config,
-}: IUpperLimitsProps): ILimit | null {
-  if (!totalVitamins || Object.keys(totalVitamins).length === 0) return null;
-  return Object.keys(totalVitamins).reduce((acc, key) => {
-    if (config.tolerableUpperLimits[key].amount >= totalVitamins[key].amount) {
-      return acc;
+export const isProductDisabled = ({
+  nutrients,
+  cartLimits,
+}: IButtonDisabledProp): boolean => {
+  if (
+    !nutrients ||
+    !cartLimits ||
+    Object.keys(cartLimits).length === 0 ||
+    Object.keys(nutrients).length === 0
+  )
+    return false;
+
+  const cartLimitsArray = Object.keys(cartLimits).map((currentKey) => {
+    if (!Object.keys(nutrients).includes(currentKey)) return false;
+    if (cartLimits[currentKey].amount - nutrients[currentKey].amount >= 0) {
+      return false;
     }
-
-    return {
-      ...acc,
-      [key]: { amount: totalVitamins[key].amount },
-    };
-  }, {});
-}
+    return true;
+  });
+  return cartLimitsArray.some((i) => i === true);
+};

@@ -84,7 +84,7 @@ export interface ILimit {
   };
 }
 
-export interface IUpperLimitsProps {
-  totalVitamins: ILimit;
-  config: IConfig;
+export interface IButtonDisabledProp {
+  nutrients: INutrients;
+  cartLimits: ILimit;
 }
