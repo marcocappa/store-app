@@ -8,7 +8,7 @@ import {
   transformProducts,
   transformConfig,
   getTotal,
-  getLimits,
+  getTotalVitamins,
 } from './utils/index';
 
 function App(): JSX.Element {
@@ -29,7 +29,11 @@ function App(): JSX.Element {
   }, [cartProducts]);
 
   useEffect(() => {
-    const newUpperLimit = getLimits({ products, config, cartProducts });
+    const newUpperLimit = getTotalVitamins({
+      products,
+      config,
+      cartProducts,
+    });
     setUpperLimit(newUpperLimit);
   }, [cartProducts]);
 
@@ -139,7 +143,7 @@ function App(): JSX.Element {
         <CartTotal
           currency={config.currency}
           total={total}
-          // upperLimit={upperLimit}
+          upperLimit={upperLimit}
         />
       )}
 

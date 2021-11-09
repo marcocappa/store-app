@@ -83,3 +83,8 @@ export interface ILimit {
     amount: number;
   };
 }
+
+export interface IUpperLimitsProps {
+  totalVitamins: ILimit;
+  config: IConfig;
+}

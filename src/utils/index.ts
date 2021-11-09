@@ -10,6 +10,7 @@ import {
   ITotal,
   ILimitsProps,
   ILimit,
+  IUpperLimitsProps,
 } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -66,52 +67,50 @@ export function getTotal({ cartProducts, products }: ITotal): number {
   }, 0);
 }
 
-export function getLimits({
+export function getTotalVitamins({
   products,
   config,
   cartProducts,
 }: ILimitsProps): ILimit | null {
   if (!cartProducts) return null;
-
-  const addedProduct = Object.keys(cartProducts).reduce(
-    (acc: ILimit, currentKey) => {
-      const qty = cartProducts[currentKey].count;
-      const nutrients = products[currentKey].nutrients;
-      const limits: ILimit = Object.keys(nutrients).reduce(
-        (nutrientsAcc, currentNutrientKey) => {
-          return {
-            ...nutrientsAcc,
-            [currentNutrientKey]: {
-              amount: nutrients[currentNutrientKey].amount * qty,
-            },
-          };
+  const totalInCart = Object.keys(config.tolerableUpperLimits).reduce(
+    (acc, key) => {
+      const total = Object.values(cartProducts).reduce((amount, cart) => {
+        if (Object.keys(products[cart.id].nutrients).includes(key)) {
+          const { count } = cart;
+          const nutrientAmount = products[cart.id].nutrients[key].amount;
+          return amount + count * nutrientAmount;
+        }
+        return amount;
+      }, 0);
+      if (total === 0) {
+        return acc;
+      }
+      return {
+        ...acc,
+        [key]: {
+          amount: total,
         },
-        {}
-      );
-
-      if (Object.keys(acc).length === 0) {
-        return limits;
-      }
-
-      console.log('acc keys', Object.keys(acc));
-      console.log('nutrients keys', Object.keys(nutrients));
-      console.log('currentKey', currentKey);
-
-      if (Object.keys(acc).includes(currentKey)) {
-        console.log('in here');
-        const amount = acc[currentKey].amount + limits[currentKey].amount;
-        return {
-          ...acc,
-          [currentKey]: {
-            amount,
-          },
-        };
-      }
-
-      return { ...acc, ...limits };
+      };
     },
     {}
   );
+  return getUpperLimits({ totalVitamins: totalInCart, config });
+}
 
-  return addedProduct;
+export function getUpperLimits({
+  totalVitamins,
+  config,
+}: IUpperLimitsProps): ILimit | null {
+  if (!totalVitamins || Object.keys(totalVitamins).length === 0) return null;
+  return Object.keys(totalVitamins).reduce((acc, key) => {
+    if (config.tolerableUpperLimits[key].amount >= totalVitamins[key].amount) {
+      return acc;
+    }
+
+    return {
+      ...acc,
+      [key]: { amount: totalVitamins[key].amount },
+    };
+  }, {});
 }
