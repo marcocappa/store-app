@@ -63,7 +63,7 @@ export function getTotal({ cartProducts, products }: ITotal): number {
   return Object.keys(cartProducts).reduce((total, currentKey) => {
     const { count } = cartProducts[currentKey];
     const { price } = products[currentKey];
-    return total + count * price;
+    return Number((total + count * price).toFixed(2));
   }, 0);
 }
 

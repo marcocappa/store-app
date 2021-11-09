@@ -1,6 +1,7 @@
 import React from 'react';
 import { IProducts, ICartProducts } from '../../types';
 import Button from '../Button/Button';
+import './style.scss';
 
 interface Props {
   heading: string;
@@ -31,27 +32,41 @@ function Cart({
           const { id, name } = products[key];
           const { count } = cartProducts[key];
           return (
-            <div key={id} data-testid={`cart-${id}`}>
-              <p>{name}</p>
-              <p>Qty: {count}</p>
-              <Button
-                onClick={() => decreaseItemQty(id)}
-                data-testid={`cart-btn-decr-${id}`}
-              >
-                -
-              </Button>
-              <Button
-                onClick={() => increaseItemQty(id)}
-                data-testid={`cart-btn-incr-${id}`}
-              >
-                +
-              </Button>
-              <Button
-                onClick={() => removeFromCart(id)}
-                data-testid={`cart-btn-remove-${id}`}
-              >
-                Remove
-              </Button>
+            <div
+              className="cart-list__product"
+              key={id}
+              data-testid={`cart-${id}`}
+            >
+              <div className="cart-list__info">
+                <p className="cart-list__info-title">{name}</p>
+                <p>Qty: {count}</p>
+              </div>
+              <div className="cart-list__actions">
+                <Button
+                  onClick={() => decreaseItemQty(id)}
+                  data-testid={`cart-btn-decr-${id}`}
+                  className="cart-list__actions-decrease"
+                  title="decrease product quantity"
+                >
+                  -
+                </Button>
+                <Button
+                  onClick={() => increaseItemQty(id)}
+                  data-testid={`cart-btn-incr-${id}`}
+                  className="cart-list__actions-increase"
+                  title="increase product quantity"
+                >
+                  +
+                </Button>
+                <Button
+                  onClick={() => removeFromCart(id)}
+                  data-testid={`cart-btn-remove-${id}`}
+                  className="cart-list__actions-remove"
+                  title="remove product from cart"
+                >
+                  Remove
+                </Button>
+              </div>
             </div>
           );
         })}

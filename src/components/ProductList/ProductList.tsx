@@ -26,7 +26,7 @@ function ProductList({
       {loading && <p>Loading products...</p>}
       {!loading && error && <p>{error}</p>}
       {!loading && !error && products && Object.keys(products).length > 0 && (
-        <div className="product-list">
+        <div className="product-list__container">
           {Object.keys(products).map((key) => {
             const { name, price, id, nutrients } = products[key];
             return (

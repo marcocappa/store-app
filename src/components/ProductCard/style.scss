@@ -1,0 +1,18 @@
+.product-card {
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  //   flex-grow: 1;
+  align-items: stretch;
+
+  @media (min-width: 620px) {
+    width: 33.333333%;
+  }
+
+  &__tite,
+  &__price {
+    color: #333;
+    text-decoration: none;
+  }
+}

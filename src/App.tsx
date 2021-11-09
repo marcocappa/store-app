@@ -128,32 +128,41 @@ function App(): JSX.Element {
 
   return (
     <div>
-      <h1>Store - App</h1>
-
-      <Cart
-        heading="Your Cart"
-        cartProducts={cartProducts}
-        products={products}
-        removeFromCart={removeFromCart}
-        increaseItemQty={increaseItemQty}
-        decreaseItemQty={decreaseItemQty}
-      />
+      <header className="header">
+        <div className="container">
+          <h1>Store - App</h1>
+        </div>
+      </header>
+      <div className="container">
+        <Cart
+          heading="Your Cart"
+          cartProducts={cartProducts}
+          products={products}
+          removeFromCart={removeFromCart}
+          increaseItemQty={increaseItemQty}
+          decreaseItemQty={decreaseItemQty}
+        />
+      </div>
 
       {cartProducts && Object.keys(cartProducts).length > 0 && (
-        <CartTotal
-          currency={config.currency}
-          total={total}
-          upperLimit={upperLimit}
-        />
+        <div className="container">
+          <CartTotal
+            currency={config.currency}
+            total={total}
+            upperLimit={upperLimit}
+          />
+        </div>
       )}
 
-      <ProductList
-        heading="All Products"
-        loading={loading}
-        error={error}
-        products={products}
-        addToCart={addToCart}
-      />
+      <div className="container">
+        <ProductList
+          heading="All Products"
+          loading={loading}
+          error={error}
+          products={products}
+          addToCart={addToCart}
+        />
+      </div>
     </div>
   );
 }

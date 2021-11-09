@@ -16,10 +16,10 @@ function ProductCard({
 }: Props): JSX.Element {
   return (
     <div className="product-card" data-testid="test-card">
-      <h3>{name}</h3>
-      <p>Price: {price}</p>
-      <p>Nutrients:</p>
-      <ul>
+      <h3 className="product-card__title">{name}</h3>
+      <p className="product-card__price">Price: {price}</p>
+      <p className="product-card__nutrients">Nutrients:</p>
+      <ul className="product-card__nutrients-list">
         {Object.keys(nutrients).map((key) => (
           <li key={nutrients[key].id}>
             {nutrients[key].id}: {nutrients[key].amount} {nutrients[key].unit}
